@@ -6,6 +6,13 @@ entrance_score <- c(72,74,76,70,73,75,71,69,77,74)
 print(t.test(entrance_score,mu=75))
 
 
+# ------------------| Interpretation for entrance score (just change values for others) |------------------
+
+# Mean of {entrance_score} = {73.1} with df = {9}, {95%} confidence interval = {71.23916, 74.96084}
+# P-value = {0.04} shows that there is {significant} difference between {entrance_score} and 
+# conclude that we {reject} H0 (Null hypothesis)
+
+
 # 2️ Buisness
 
 monthly_sales <- c(48000,51000,49500,50500,49000,52000,50000,48500)

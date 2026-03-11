@@ -109,3 +109,63 @@ df6_new["avg"] = df6_new["total"]/2
 
 
 
+# -------------| Multiple problems |-------------
+
+
+
+
+df9 = pd.DataFrame({
+  "id" : [1,2,2,3,np.nan],
+  "age" : [20,25,25,-10,30],
+  "income" : ["10000","20000","20000","not available","30000"]
+})
+
+
+df9_clean = df9.copy()
+df9_clean["id"] = df9_clean["id"].replace(np.nan,0)
+df9_clean["age"] = np.where(df9_clean["age"]<0,df9_clean["age"].mean(),df9_clean["age"])
+df9_clean["income"] = df9_clean["income"].replace("not available",np.nan)
+df9_clean["income"] = pd.to_numeric(df9_clean["income"])
+df9_clean["income"] = df9_clean["income"].replace(np.nan,df9_clean["income"].mean())
+df9_clean = df9_clean.drop_duplicates()
+
+
+# -------------| Advanced Problems |-------------
+
+import pandas as pd
+import numpy as np
+
+df10 = pd.DataFrame({
+  "year" : ["2020","2021","2021","2022"],
+  "sales_q1" : ["100","150","150","200"],
+  "sales_q2" : ["120",np.nan,"170","210"]
+})
+
+
+
+df10_clean = df10.copy()
+df10_clean["sales_q1"] = pd.to_numeric(df10_clean["sales_q1"])
+df10_clean["sales_q2"] = pd.to_numeric(df10_clean["sales_q2"])
+df10_clean["sales_q2"] = df10_clean["sales_q2"].replace(np.nan,df10_clean["sales_q2"].median())
+df10_clean["total_sales"] = df10_clean["sales_q1"] + df10_clean["sales_q2"]
+
+
+
+# -------------| Complex DataSet |-------------
+
+
+df11 = pd.DataFrame({
+  "id" : [1,2,2,np.nan,4,5],
+  "gender" : ["M","F","F","Unknown","M",np.nan],
+  "age" : ["15","thirty","30","40",np.nan,"50"],
+  "income" : ["50000","60000","60000","Unknown","70000","80000"]
+})
+
+
+df11_clean = df11.copy()
+df11_clean["id"] = df11_clean["id"].replace(np.nan,0)
+df11_clean["income"] = df11_clean["income"].replace("Unknown",np.nan)
+df11_clean["income"] = pd.to_numeric(df11_clean["income"])
+df11_clean["income"] = df11_clean["income"].replace(np.nan,df11_clean["income"].mean())
+df11_clean["gender"] = df11_clean["gender"].replace("Unknown",np.nan)
+df11_clean["gender"] = df11_clean["gender"].fillna("Other")

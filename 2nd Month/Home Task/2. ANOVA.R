@@ -1,6 +1,8 @@
 # 1. Teaching Methods (Education)**
 
 
+
+
 library(ggplot2)
 
 method = factor(rep(c("Lecture", "Online", "Blended"), each=5))
@@ -92,7 +94,6 @@ ggplot(df_cyan , aes(loation,revenue)) + geom_boxplot(fill="cyan")
 
 summary(aov(revenue~location,data=df_cyan))
 summary(lm(revenue~location,data=df_cyan))
-
 
 
 

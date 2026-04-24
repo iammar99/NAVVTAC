@@ -316,3 +316,21 @@ data$price[is.na(data$price)] <- mean_price
 write.csv(data, "G:/Courses/NAVVTAC/1st Month/Practice/Auto Cleaning/data_updated.csv", row.names = FALSE)
 
 
+
+
+
+
+
+str(data)
+
+# Checking which columns are non numeric 
+
+non_numeric_cols <- names(data)[!sapply(data, is.numeric)]
+non_numeric_cols
+
+#  checking correlation of numeric columns 
+
+numeric_df <- data[sapply(data, is.numeric)]
+cor_matrix <- cor(numeric_df)
+round(cor_matrix,2)
+

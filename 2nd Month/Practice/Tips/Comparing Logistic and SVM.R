@@ -58,6 +58,35 @@ table(Predicted = pred_poly, Actual = data$smoker)
 
 
 
+# -------------------------------------
+#       Plotting Matrix
+# -------------------------------------
+
+
+make_cm_df <- function(pred, actual, model_name) {
+  cm <- as.data.frame(table(Predicted = pred, Actual = actual))
+  cm$model <- model_name
+  return(cm)
+}
+
+df_all <- rbind(
+  make_cm_df(pred_class, data$smoker, "Logistic"),
+  make_cm_df(pred_linear, data$smoker, "SVM Linear"),
+  make_cm_df(pred_radial, data$smoker, "SVM Radial"),
+  make_cm_df(pred_poly, data$smoker, "SVM Polynomial")
+)
+
+ggplot(df_all, aes(x = Actual, y = Predicted, fill = Freq)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = Freq), size = 4, fontface = "bold") +
+  scale_fill_gradient(low = "#E0F7FA", high = "#006064") +
+  facet_wrap(~model) +
+  theme_minimal() +
+  labs(title = "Confusion Matrices Comparison") +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    strip.text = element_text(face = "bold")
+  )
 # ----------------------| Logistic Regression |----------------------
 
 

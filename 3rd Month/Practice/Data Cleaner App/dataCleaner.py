@@ -479,28 +479,54 @@ if st.session_state.df is not None:
     st.markdown("### 📊 Dataset Overview")
     m1, m2, m3, m4 = st.columns(4)
     
-    # Metric 1: Total rows (shows reduction)
-    rows_saved = len(df) - len(cdf)
-    m1.metric("Total Rows", f"{len(cdf):,}", 
-              delta=f"-{rows_saved}" if rows_saved > 0 else None)
+    # Calculate issues in original vs cleaned
+    original_issues = df.duplicated().sum() + df.isnull().sum().sum()
+    current_issues = cdf.duplicated().sum() + cdf.isnull().sum().sum()
     
-    # Metric 2: Duplicates (shows duplicates removed)
-    dupes_removed = df.duplicated().sum() - cdf.duplicated().sum()
-    m2.metric("Duplicates", f"{cdf.duplicated().sum():,}",
-              delta=f"-{dupes_removed}" if dupes_removed > 0 else None)
-    
-    # Metric 3: Missing values (shows nulls fixed)
-    missing_fixed = df.isnull().sum().sum() - cdf.isnull().sum().sum()
-    m3.metric("Missing Values", f"{cdf.isnull().sum().sum():,}",
-              delta=f"-{missing_fixed}" if missing_fixed > 0 else None)
-    
-    # Metric 4: Overall improvement score
-    if rows_saved > 0 or dupes_removed > 0 or missing_fixed > 0:
-        total_improvements = rows_saved + dupes_removed + missing_fixed
-        m4.metric("Total Fixes", f"{total_improvements:,}", 
-                  delta="✨ Cleaned", delta_color="normal")
+    # Calculate percentage of issues FIXED (0% at start, 100% when clean)
+    if original_issues > 0:
+        issues_fixed_pct = ((original_issues - current_issues) / original_issues) * 100
     else:
-        m4.metric("Status", "✓ Ready", delta="No issues found")
+        issues_fixed_pct = 100  # No issues to fix
+    
+    # Metric 1: Total rows
+    rows_removed = len(df) - len(cdf)
+    if rows_removed > 0:
+        m1.metric("Total Rows", f"{len(cdf):,}", delta=f"-{rows_removed}")
+    else:
+        m1.metric("Total Rows", f"{len(df):,}")
+    
+    # Metric 2: Duplicates
+    current_dupes = cdf.duplicated().sum()
+    original_dupes = df.duplicated().sum()
+    if current_dupes > 0:
+        m2.metric("Duplicates", f"{current_dupes:,}", delta="⚠️ Present")
+    elif original_dupes > 0 and current_dupes == 0:
+        m2.metric("Duplicates", "0", delta="✅ Fixed")
+    else:
+        m2.metric("Duplicates", "0")
+    
+    # Metric 3: Missing values
+    current_missing = cdf.isnull().sum().sum()
+    original_missing = df.isnull().sum().sum()
+    if current_missing > 0:
+        m3.metric("Missing Values", f"{current_missing:,}", delta="⚠️ Present")
+    elif original_missing > 0 and current_missing == 0:
+        m3.metric("Missing Values", "0", delta="✅ Fixed")
+    else:
+        m3.metric("Missing Values", "0")
+    
+    # Metric 4: Issues fixed percentage (0% → 100%)
+    if current_issues == 0:
+        m4.metric("✨ Issues Fixed", f"{issues_fixed_pct:.0f}%", 
+                  delta="✅ Complete", delta_color="normal")
+    elif issues_fixed_pct == 0:
+        m4.metric("🔧 Issues Fixed", "0%", 
+                  delta="Run cleaning →", delta_color="inverse")
+    else:
+        m4.metric("🔧 Issues Fixed", f"{issues_fixed_pct:.0f}%", 
+                  delta=f"{issues_fixed_pct:.0f}% Done", delta_color="normal")
+    
     st.markdown("---")
 
     # ---------- TABS ----------
